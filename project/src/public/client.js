@@ -1,7 +1,10 @@
 let store = {
-    user: { name: "Student" },
-    apod: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
+    user: { name: "Jörn" },
+    curiosity: '',
+    opportunity: '',
+    spirit: '',
+    perseverance: '',
+    rovers: ['Curiosity', 'Opportunity', 'Spirit', 'Perseverance'],
 }
 
 // add our markup to the page
@@ -19,14 +22,14 @@ const render = async (root, state) => {
 
 // create content
 const App = (state) => {
-    let { rovers, apod } = state
+    let { rovers, perseverance } = state
 
     return `
         <header></header>
         <main>
             ${Greeting(store.user.name)}
             <section>
-                <h3>Put things on the page!</h3>
+                <h3>Latest Mars Rover Photos</h3>
                 <p>Here is an example section.</p>
                 <p>
                     One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
@@ -36,8 +39,10 @@ const App = (state) => {
                     explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
                     but generally help with discoverability of relevant imagery.
                 </p>
-                ${ImageOfTheDay(apod)}
-            </section>
+                <div class="grid">
+                ${ImageOfTheDay(perseverance)}
+                </div>
+                </section>
         </main>
         <footer></footer>
     `
@@ -60,12 +65,15 @@ const Greeting = (name) => {
 
     return `
         <h1>Hello!</h1>
+        
     `
 }
 
+
+
 // Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
-
+    console.log(apod)
     // If image does not already exist, or it is not from today -- request it again
     const today = new Date()
     const photodate = new Date(apod.date)
@@ -85,8 +93,17 @@ const ImageOfTheDay = (apod) => {
         `)
     } else {
         return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
+            <div class="frame">
+            <img src="${apod.image.latest_photos[0].img_src}" alt="latest Rover pic" class="responsive frameImg" />
+            <p>${apod.image.latest_photos[0].camera.full_name} (Date: ${apod.image.latest_photos[0].earth_date})</p>
+            </div>
+
+            <div class="frame">
+            <img src="${apod.image.latest_photos[1].img_src}" alt="latest Rover pic" class="responsive frameImg" />
+            <p>${apod.image.latest_photos[1].camera.full_name} (Date: ${apod.image.latest_photos[1].earth_date})</p>
+            </div>
+
+  
         `)
     }
 }
@@ -94,12 +111,15 @@ const ImageOfTheDay = (apod) => {
 // ------------------------------------------------------  API CALLS
 
 // Example API call
-const getImageOfTheDay = (state) => {
-    let { apod } = state
+const getImageOfTheDay = async (state) => {
+    let { perseverance } = state
 
-    fetch(`http://localhost:3000/apod`)
-        .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
+    const perseveranceData = await fetch(`http://localhost:3000/perseverance`)
+    perseverance = await perseveranceData.json()
+    
+    updateStore(store, { perseverance })
 
-    return data
+
+    //.then(res => res.json())
+    //    .then(perseverance => updateStore(store, { perseverance }))
 }
