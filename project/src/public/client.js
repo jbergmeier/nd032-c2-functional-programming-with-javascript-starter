@@ -1,12 +1,12 @@
-let store = {
-    user: { name: "Jörn" },
+let store = Immutable.Map({
+    user: Immutable.Map({ name: "Jörn" }),
     curiosity: '',
     opportunity: '',
     apod:'',
     spirit: '',
     perseverance: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit', 'Perseverance'],
-}
+})
 
 // add our markup to the page
 const root = document.getElementById('root')
@@ -20,15 +20,15 @@ const render = async (root, state) => {
     root.innerHTML = App(state)
 }
 
-
 // create content
 const App = (state) => {
-    let { rovers, perseverance } = state
+    let { rovers, perseverance, opportunity, spirit, curiosity } = state
+    const chosenRover = perseverance
 
     return `
         <header></header>
         <main>
-            ${Greeting(store.user.name)}
+            ${Greeting(store.get("user").get("name"))}
             <section>
                 <h3>Latest Mars Rover Photos</h3>
                 <p>Here is an example section.</p>
@@ -40,8 +40,12 @@ const App = (state) => {
                     explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
                     but generally help with discoverability of relevant imagery.
                 </p>
-                <div class="grid">
-                ${ImageOfTheDay(opportunity)}
+            
+                <p>Please choose a rover</p>
+                ${Dropdown(store.get("rovers"))}
+                <br />
+                <div class="grid" id="roverGrid">
+                
                 </div>
                 </section>
         </main>
@@ -49,11 +53,7 @@ const App = (state) => {
     `
 }
 
-// listening for load event because page should load before any JS is called
-window.addEventListener('load', () => {
-    render(root, store)
-    getImageOfTheDay(store)
-})
+
 
 // ------------------------------------------------------  COMPONENTS
 
@@ -71,12 +71,58 @@ const Greeting = (name) => {
     `
 }
 
+// Dropdown menu to choose the Rover
+const Dropdown = (roverList) => {
+    const rovers = roverList.map((thisRover => {
+        return `
+        <option id="${thisRover}" value="${thisRover}">${thisRover}</option>   
+        `
+    }))
+
+    return ` 
+        <div id="roverselection">
+            <select id="roverDropdown" disabled="true">
+                <option disabled selected value="result" id="blank"> --- </option> 
+                ${rovers.join('')}
+            </select>
+        </div>
+    `    
+}
+
+const getChoosenRover = () => {
+    if(document.getElementById("roverDropdown").value != "blank")
+    {
+        const roverDropdownValue = document.getElementById("roverDropdown").value
+        return roverDropdownValue
+    }
+}
+
+
+const roverChoice = (roverData) => {
+    const roverDataPoint = document.getElementById("roverGrid")
+    const rover = roverData.toLowerCase()
+    if(rover == "spirit"){
+        roverDataPoint.innerHTML= latestRoverImage(store.spirit)
+    }
+    else if(rover == "perseverance"){
+        roverDataPoint.innerHTML= latestRoverImage(store.perseverance)
+    }
+    else if(rover == "opportunity"){
+        roverDataPoint.innerHTML= latestRoverImage(store.opportunity)
+    }
+    else if(rover == "curiosity"){
+        roverDataPoint.innerHTML= latestRoverImage(store.curiosity)
+    }
+    return rover
+}
+
+
 
 
 // Example of a pure function that renders infomation requested from the backend
-const ImageOfTheDay = (apod) => {    
+const latestRoverImage = (roverData) => {  
 
-    const mapRover = apod.image.latest_photos.map((thisRover) => {
+    const mapRover = roverData.image.latest_photos.map((thisRover) => {
         console.log("this rover: " + thisRover.img_src)
         return (`
             <div class="frame">
@@ -92,7 +138,7 @@ const ImageOfTheDay = (apod) => {
 
 // ------------------------------------------------------  API CALLS
 
-// Example API call
+// Get Image Data from API
 const getImageOfTheDay = async (state) => {
     let { perseverance, curiosity, spirit } = state
 
@@ -120,10 +166,19 @@ const getImageOfTheDay = async (state) => {
     
     updateStore(store, { opportunity })
 
-    //.then(res => res.json())
-    //    .then(perseverance => updateStore(store, { perseverance }))
+    // Activate Dropdown after Loading Data
+    document.getElementById("roverDropdown").disabled = false
+
 }
 
 
+// listening for load event because page should load before any JS is called
+window.addEventListener('load', () => {
+    render(root, store)
+    getImageOfTheDay(store)
+})
 
-setTimeout(function(){ console.log(store); }, 3000);
+//Event Listener on DropDown Change
+root.addEventListener('change', () => {
+    roverChoice(getChoosenRover())
+  }, false)
