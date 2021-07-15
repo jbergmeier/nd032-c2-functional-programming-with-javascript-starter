@@ -40,6 +40,9 @@ const App = (state) => {
                     explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
                     but generally help with discoverability of relevant imagery.
                 </p>
+                <div id="roverInformation" hidden>
+                    <h1>Hello</h1>
+                </div>
             
                 <p>Please choose a rover</p>
                 ${Dropdown(store.get("rovers"))}
@@ -52,6 +55,7 @@ const App = (state) => {
         <footer></footer>
     `
 }
+
 
 
 
@@ -100,18 +104,24 @@ const getChoosenRover = () => {
 
 const roverChoice = (roverData) => {
     const roverDataPoint = document.getElementById("roverGrid")
+    const roverInfomation = document.getElementById("roverInformation")
+    
     const rover = roverData.toLowerCase()
     if(rover == "spirit"){
         roverDataPoint.innerHTML= latestRoverImage(store.spirit)
+        roverInfomation.removeAttribute("hidden")
     }
     else if(rover == "perseverance"){
         roverDataPoint.innerHTML= latestRoverImage(store.perseverance)
+        roverInfomation.removeAttribute("hidden")
     }
     else if(rover == "opportunity"){
         roverDataPoint.innerHTML= latestRoverImage(store.opportunity)
+        roverInfomation.removeAttribute("hidden")
     }
     else if(rover == "curiosity"){
         roverDataPoint.innerHTML= latestRoverImage(store.curiosity)
+        roverInfomation.removeAttribute("hidden")
     }
     return rover
 }
@@ -121,6 +131,15 @@ const roverChoice = (roverData) => {
 
 // Example of a pure function that renders infomation requested from the backend
 const latestRoverImage = (roverData) => {  
+    const roverInfomation = document.getElementById("roverInformation")
+    roverInfomation.innerHTML = `
+        <h3>${roverData.image.latest_photos[0].rover.name}</h3>
+        <p><b>Launch Date:</b> ${roverData.image.latest_photos[0].rover.launch_date}</p>
+        <p><b>Landing Date:</b> ${roverData.image.latest_photos[0].rover.landing_date}</p>
+        <p><b>Status:</b> ${roverData.image.latest_photos[0].rover.status}</p>
+        <p><b>Latest Photo Date:</b> ${roverData.image.latest_photos[0].earth_date}</p>
+        <br />
+        `
 
     const mapRover = roverData.image.latest_photos.map((thisRover) => {
         console.log("this rover: " + thisRover.img_src)
