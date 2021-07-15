@@ -41,7 +41,7 @@ const App = (state) => {
                     but generally help with discoverability of relevant imagery.
                 </p>
                 <div class="grid">
-                ${ImageOfTheDay(perseverance)}
+                ${ImageOfTheDay(opportunity)}
                 </div>
                 </section>
         </main>
@@ -52,6 +52,7 @@ const App = (state) => {
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
     render(root, store)
+    getImageOfTheDay(store)
 })
 
 // ------------------------------------------------------  COMPONENTS
@@ -73,32 +74,19 @@ const Greeting = (name) => {
 
 
 // Example of a pure function that renders infomation requested from the backend
-const ImageOfTheDay = (apod) => {
-    console.log(apod)
-    // If image does not already exist, or it is not from today -- request it again
-    const today = new Date()
-    const photodate = new Date(apod.date)
-    console.log(photodate.getDate(), today.getDate());
+const ImageOfTheDay = (apod) => {    
 
-    console.log(photodate.getDate() === today.getDate());
-    if (!apod || apod.date === today.getDate() ) {
-        getImageOfTheDay(store)
-    }
+    const mapRover = apod.image.latest_photos.map((thisRover) => {
+        console.log("this rover: " + thisRover.img_src)
+        return (`
+            <div class="frame">
+            <p><img src="${thisRover.img_src}" alt="latest Rover pic" class="responsive frameImg" /></p>
+            <p>${thisRover.camera.full_name} (Date: ${thisRover.earth_date})</p>
+            </div>
+        `)
 
-
-    return (`
-        <div class="frame">
-        <img src="${apod.image.latest_photos[0].img_src}" alt="latest Rover pic" class="responsive frameImg" />
-        <p>${apod.image.latest_photos[0].camera.full_name} (Date: ${apod.image.latest_photos[0].earth_date})</p>
-        </div>
-
-        <div class="frame">
-        <img src="${apod.image.latest_photos[1].img_src}" alt="latest Rover pic" class="responsive frameImg" />
-        <p>${apod.image.latest_photos[1].camera.full_name} (Date: ${apod.image.latest_photos[1].earth_date})</p>
-        </div>
-
-
-    `)
+    })
+    return mapRover.join('')
     
 }
 
@@ -106,13 +94,31 @@ const ImageOfTheDay = (apod) => {
 
 // Example API call
 const getImageOfTheDay = async (state) => {
-    let { perseverance } = state
+    let { perseverance, curiosity, spirit } = state
 
+    // Get Data for Perseverance Rover (newest)
     const perseveranceData = await fetch(`http://localhost:3000/perseverance`)
     perseverance = await perseveranceData.json()
     
     updateStore(store, { perseverance })
 
+    // Get Data for Curiosity Rover
+    const ciuriosityData = await fetch(`http://localhost:3000/curiosity`)
+    curiosity = await ciuriosityData.json()
+    
+    updateStore(store, { curiosity })
+
+    // Get Data for Spirit Rover
+    const spiritData = await fetch(`http://localhost:3000/spirit`)
+    spirit = await spiritData.json()
+    
+    updateStore(store, { spirit })
+
+    // Get Data for Opportunity Rover
+    const opportunityData = await fetch(`http://localhost:3000/spirit`)
+    opportunity = await opportunityData.json()
+    
+    updateStore(store, { opportunity })
 
     //.then(res => res.json())
     //    .then(perseverance => updateStore(store, { perseverance }))
