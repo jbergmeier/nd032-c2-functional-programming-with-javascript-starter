@@ -51,7 +51,7 @@ app.get('/opportunity', async (req, res) => {
 // Spirit Rover
 app.get('/spirit', async (req, res) => {
     try {
-        let image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`)
+        let image = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/latest_photos?api_key=${process.env.API_KEY}`)
             .then(res => res.json())
         res.send({ image })
         console.log(image)

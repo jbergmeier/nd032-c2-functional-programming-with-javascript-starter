@@ -161,7 +161,7 @@ const getImageOfTheDay = async (state) => {
     updateStore(store, { spirit })
 
     // Get Data for Opportunity Rover
-    const opportunityData = await fetch(`http://localhost:3000/spirit`)
+    const opportunityData = await fetch(`http://localhost:3000/opportunity`)
     opportunity = await opportunityData.json()
     
     updateStore(store, { opportunity })
