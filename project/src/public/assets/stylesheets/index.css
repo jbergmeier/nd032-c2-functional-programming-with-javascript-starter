@@ -6,7 +6,8 @@ body {
   font-family: Arial;
   min-height: 100vh;
   margin: 0 auto;
-  width: 80%;
+  width: 50%;
+  background-color: aliceblue;
 }
 
 header {

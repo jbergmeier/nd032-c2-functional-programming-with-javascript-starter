@@ -2,6 +2,7 @@ let store = {
     user: { name: "Jörn" },
     curiosity: '',
     opportunity: '',
+    apod:'',
     spirit: '',
     perseverance: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit', 'Perseverance'],
@@ -84,28 +85,21 @@ const ImageOfTheDay = (apod) => {
         getImageOfTheDay(store)
     }
 
-    // check if the photo of the day is actually type video!
-    if (apod.media_type === "video") {
-        return (`
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
-        `)
-    } else {
-        return (`
-            <div class="frame">
-            <img src="${apod.image.latest_photos[0].img_src}" alt="latest Rover pic" class="responsive frameImg" />
-            <p>${apod.image.latest_photos[0].camera.full_name} (Date: ${apod.image.latest_photos[0].earth_date})</p>
-            </div>
 
-            <div class="frame">
-            <img src="${apod.image.latest_photos[1].img_src}" alt="latest Rover pic" class="responsive frameImg" />
-            <p>${apod.image.latest_photos[1].camera.full_name} (Date: ${apod.image.latest_photos[1].earth_date})</p>
-            </div>
+    return (`
+        <div class="frame">
+        <img src="${apod.image.latest_photos[0].img_src}" alt="latest Rover pic" class="responsive frameImg" />
+        <p>${apod.image.latest_photos[0].camera.full_name} (Date: ${apod.image.latest_photos[0].earth_date})</p>
+        </div>
 
-  
-        `)
-    }
+        <div class="frame">
+        <img src="${apod.image.latest_photos[1].img_src}" alt="latest Rover pic" class="responsive frameImg" />
+        <p>${apod.image.latest_photos[1].camera.full_name} (Date: ${apod.image.latest_photos[1].earth_date})</p>
+        </div>
+
+
+    `)
+    
 }
 
 // ------------------------------------------------------  API CALLS
@@ -123,3 +117,7 @@ const getImageOfTheDay = async (state) => {
     //.then(res => res.json())
     //    .then(perseverance => updateStore(store, { perseverance }))
 }
+
+
+
+setTimeout(function(){ console.log(store); }, 3000);
