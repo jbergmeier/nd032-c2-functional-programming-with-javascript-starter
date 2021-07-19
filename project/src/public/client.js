@@ -197,7 +197,7 @@ window.addEventListener('load', () => {
     getImageOfTheDay(store)
 })
 
-//Event Listener on DropDown Change
+//Event Listener on DropDown Change // Higher Order function
 root.addEventListener('change', () => {
     roverChoice(getChoosenRover())
   }, false)
